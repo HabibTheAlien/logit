@@ -201,3 +201,124 @@ or_table <- tidy(model, conf.int = TRUE, exponentiate = TRUE)
 or_table
 
 
+
+
+
+
+
+
+
+
+
+
+#=========================================================================================================
+# Semester
+#=========================================================================================================
+
+# ==============================================================================
+# STA4206L Exam Script: Hypertension Data Analysis
+# ==============================================================================
+
+# 1. SETUP AND IMPORT
+# ------------------------------------------------------------------------------
+install.packages("haven")
+library(haven)
+
+# IMPORT data HYPERT.csv
+HYPERT <- read.csv("HYPERT.csv")
+
+# Randomly select 650 cases using ID as seed
+# REPLACE '12345678' with your actual Student ID number
+set.seed(12345678) 
+HYPERT2 <- HYPERT[sample(nrow(HYPERT), size = 650, replace = FALSE), ]
+
+# Export the data into SPSS file
+write_sav(HYPERT2, "HYPERT.sav")
+
+# 2. ANALYSIS
+# ------------------------------------------------------------------------------
+
+# (a) Are there any missing observations? If yes, how many?
+missing_total <- sum(is.na(HYPERT2))
+missing_by_var <- colSums(is.na(HYPERT2))
+
+print("--- Question (a): Missing Observations ---")
+print(paste("Total missing values:", missing_total))
+print(missing_by_var)
+
+
+# (b) Calculate BMI and recode into BMICLASS
+# Formula: weight(kg) / [height(m)]^2
+HYPERT2$BMI <- HYPERT2$weight / (HYPERT2$height / 100)^2
+
+# Recode into 4 categories
+HYPERT2$BMICLASS <- cut(HYPERT2$BMI, 
+                        breaks = c(-Inf, 20, 25, 30, Inf), 
+                        labels = c(1, 2, 3, 4), 
+                        right = FALSE)
+
+print("--- Question (b): BMI Classification Distribution ---")
+table(HYPERT2$BMICLASS)
+
+
+# (c) Risk of Isolated Systolic Hypertension (ISH) in 1993 for women
+# Note: ISII is the variable for ISH in 1993; sex: 1 = female
+women_data <- subset(HYPERT2, sex == 1)
+n_women <- nrow(women_data)
+cases_ish <- sum(women_data$ISII == 1, na.rm = TRUE)
+
+risk_women <- cases_ish / n_women
+
+# 95% Confidence Interval Calculation (Manual)
+# Formula: p +/- 1.96 * sqrt(p*(1-p)/n)
+se <- sqrt((risk_women * (1 - risk_women)) / n_women)
+ci_lower <- risk_women - (1.96 * se)
+ci_upper <- risk_women + (1.96 * se)
+
+print("--- Question (c): Risk for Women ---")
+print(paste("Risk of ISH for women:", round(risk_women, 4)))
+print(paste("95% CI: [", round(ci_lower, 4), ",", round(ci_upper, 4), "]"))
+
+
+# (d) Association between ISII and BMICLASS
+print("--- Question (d): Association ---")
+# Chi-square test
+chi_test <- chisq.test(HYPERT2$ISII, HYPERT2$BMICLASS)
+print(chi_test)
+
+# Highest probability calculation
+prob_table <- prop.table(table(HYPERT2$BMICLASS, HYPERT2$ISII), margin = 1)
+print("Proportion Table (Rows = BMICLASS, Col 2 = ISH Probability):")
+print(prob_table)
+
+
+# (e) Logistic Regression
+# Response: ISII, Explanatory: age, sex, smoke93, BMICLASS
+# Note: Categorical variables should be treated as factors
+logit_model <- glm(ISII ~ age + factor(sex) + factor(smoke93) + factor(BMICLASS), 
+                   data = HYPERT2, family = "binomial")
+
+print("--- Question (e): Logistic Regression Output ---")
+summary(logit_model)
+
+# Odds Ratios (OR)
+print("Odds Ratios:")
+exp(coef(logit_model))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
