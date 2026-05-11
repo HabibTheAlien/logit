@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RStudio Update</title>
+    <style>
+      /* Basic Reset and Setup */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        text-align: center;
+      }
+
+      /* Header Styling */
+      header {
+        background-color: #0056b3;
+        color: white;
+        padding: 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Main Content Area */
+      main {
+        flex-grow: 1;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      .content {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 800px; /* Adjusted width for more buttons */
+        width: 100%;
+      }
+
+      /* Download Button Styling */
+      .download-container {
+        margin: 30px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .download-button {
+        display: inline-block;
+        color: white;
+        padding: 12px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1em;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        border: none;
+        cursor: pointer;
+        min-width: 180px;
+      }
+
+      /* Color Variations */
+      .btn-green {
+        background-color: #28a745;
+      }
+      .btn-green:hover {
+        background-color: #218838;
+      }
+
+      .btn-red {
+        background-color: #dc3545;
+      }
+      .btn-red:hover {
+        background-color: #c82333;
+      }
+
+      .btn-blue {
+        background-color: #007bff;
+      }
+      .btn-blue:hover {
+        background-color: #0069d9;
+      }
+
+      .btn-purple {
+        background-color: #6f42c1;
+      }
+      .btn-purple:hover {
+        background-color: #59359a;
+      }
+
+      .btn-orange {
+        background-color: #fd7e14;
+      }
+      .btn-orange:hover {
+        background-color: #e36a07;
+      }
+
+      /* Footer Styling */
+      footer {
+        background-color: #333;
+        color: #ccc;
+        padding: 15px 0;
+        font-size: 0.9em;
+      }
+
+      #message {
+        margin-top: 20px;
+        color: #0056b3;
+        font-weight: bold;
+        height: 20px; /* Prevents layout jump */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>RStudio Update</h1>
+    </header>
+
+    <main>
+      <section class="content">
+        <h1>007 Page Not Found</h1>
+
+        <div class="download-container">
+          <!-- Original Buttons -->
+          <!-- <a
+            href="stata.txt"
+            download
+            class="download-button btn-green"
+            id="downloadR"
+            >⬇️ R codes</a
+          >
+          <a
+            href="text.pdf"
+            download
+            class="download-button btn-red"
+            id="downloadPDF"
+            >⬇️ Documentation</a
+          > -->
+
+          <!-- New Buttons -->
+          <a
+            href="LogisticRegressionLab.R"
+            download
+            class="download-button btn-blue"
+            id="downloadRcode"
+            >⬇️ RCodes</a
+          >
+          <a
+            href="STA L4206 LAB Logistic Regression.pdf"
+            download
+            class="download-button btn-purple"
+            id="downloadSlid"
+            >⬇️ Slids</a
+          >
+          <a
+            href="LogisticRegressionLab.docx"
+            download
+            class="download-button btn-orange"
+            id="downloadBasic"
+            >⬇️ Basics</a
+          >
+        </div>
+
+        <p id="message"></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Simple Download Page</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const messageElement = document.getElementById("message");
+
+        // Generic function to handle the download feedback
+        const handleDownload = (fileName) => {
+          messageElement.textContent = `Download started for ${fileName}! Thank you.`;
+
+          // Clear the message after 5 seconds
+          setTimeout(() => {
+            messageElement.textContent = "";
+          }, 5000);
+        };
+
+        // Select all download buttons and attach event listeners
+        const buttons = document.querySelectorAll(".download-button");
+
+        buttons.forEach((button) => {
+          button.addEventListener("click", (e) => {
+            // Extract the filename from the href or the text content
+            const fileName = button.textContent.replace("⬇️ ", "").trim();
+            handleDownload(fileName);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
