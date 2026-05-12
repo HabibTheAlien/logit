@@ -2,6 +2,10 @@
 #====================Experiment-1(CRD)==========================
 #===============================================================
 
+
+# p-value < 0.05 → Significant (Treatment golor moddhy parthikko ache) (Reject H0)
+# p-value ≥ 0.05 → insignificant (Accept H0)
+
 #install.packages("gmodels")
 #install.packages("agricolae")
 library(gmodels)
@@ -10,9 +14,10 @@ library(agricolae)
 Feed_1 <- c(179, 186, 200, 182, 187, 197)
 Feed_2 <- c(169, 188, 179, 189, 186, 168, 182)
 Feed_3 <- c(182, 191, 243, 214, 213, 202, 180, 214)
-Feed_4 <- c(168, 218, 174, 192, 171, 224)
+Feed_4 <- c(210,220,226,245,241,225)
 Feed_5 <- c(210, 214, 220, 192, 188, 189, 190, 224)
 Feed_6 <- c(155, 176, 159, 161, 165)
+
 
 group <- c(Feed_1, Feed_2, Feed_3, Feed_4, Feed_5, Feed_6)
 
@@ -32,7 +37,7 @@ summary(model)
 #(c) Test the hypothesis that there is a significant difference between the mean weights of chickens fed diets 3 and 6.
 
 con <- matrix(c(0,0,1,0,0,-1,
-                0,0,1,0,-1,0), 2, 6, byrow = TRUE)
+                0,0,1,0,-1,0), nrow = 2, byrow = TRUE)
 
 rownames(con) <- c("Feed_3 VS Feed_6", "Feed_3 VS Feed_5")
 con
@@ -53,7 +58,7 @@ LSD_Test$groups
 #===============================================================
 
 # H0:There is no significant difference between the block means.
-# H1:At least one block mean differs significantly.
+# H1:At least one block mean differs  significantly.
 
 # H0:All the diet are equal
 # H1:At least two 2ui's are unequal
@@ -75,7 +80,12 @@ y <- c(y1, y2, y3, y4, y5, y6)
 
 Treatment <- factor(rep(LETTERS[1:6], each = 5))
 
+# each = 5 :- number of blocks
+
+
 Block <- factor(rep(1:5, times = 6))
+# times = 6  :- number of treatment
+# 1:5  :- number of blocks
 
 Data <- data.frame(y, Treatment, Block)
 
@@ -140,6 +150,14 @@ Treatment<-factor(paste0("diet", (c(1,2,3,4,
                                     2,4,1,3,
                                     3,1,4,2,
                                     4,3,2,1))))
+
+
+# amon o hote pare
+# Treatment<-factor(paste0("fertiliser",(c("A","B","C","D","E",
+#                                           "B","C","D","E","A",
+#                                           "C","D","E","A","B",
+#                                           "D","E","A","B","C",
+#                                           "E","A","B","C","D"))))
 yields<-c(192, 190, 214, 221,
           195, 203, 139, 152,
           292, 218, 245, 204,
@@ -149,6 +167,10 @@ data<-data.frame(yields, Row, Column, Treatment)
 names(data)
 
 myfit<-aov(yields ~ Row+Column+Treatment,data=data)
+
+#General model summary
+summary(myfit)
+# Analysis of Variance Table
 fit<-anova(myfit)
 fit
 
