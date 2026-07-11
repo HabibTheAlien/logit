@@ -267,7 +267,7 @@ rand <- function(m, a, seed, n){   # m and a are vectors of length k
       sum <- sum + ((-1)^(j-1)) * z[j]
     }
     x <- sum %% (m[1]-1)
-    if(x<0)
+    if(x>0)
       R <- (x + m[1]) else (m[1]-1)/m[1]
     vec <- c(vec, R)
   }
@@ -380,148 +380,6 @@ results
 
 
 #===============================================================================
-#======================= Uniform Distribution ==================================
-#===============================================================================
-n <- 500
-uSamp <- runif(n, min = 0, max = 1)
-
-hist(uSamp, prob = TRUE, main = "Uniform Distribution")
-lines(density(uSamp))
-
-# 3. Mean and Variance Agreement
-# Theoretical Mean = (min + max) / 2 = 0.5
-# Theoretical Variance = (max - min)^2 / 12 = 0.0833
-mean(uSamp)
-var(uSamp)
-
-# 4. Hypothesis Testing about the Mean (H0: mu = 0.5)
-test(uSamp, mu = 0.5)
-
-
-
-#===============================================================================
-#======================= Binomial Distribution ==================================
-#===============================================================================
-n <- 500
-trials <- 10
-p <- 0.5
-bSamp <- rbinom(n, size = trials, prob = p)
-
-hist(bSamp, prob = TRUE, main = "Binomial Distribution")
-lines(density(bSamp))
-
-# 3. Mean and Variance Agreement
-# Theoretical Mean = trials * p = 10 * 0.5 = 5
-# Theoretical Variance = trials * p * (1 - p) = 10 * 0.5 * 0.5 = 2.5
-mean(bSamp)
-var(bSamp)
-
-# 4. Hypothesis Testing about the Mean (H0: mu = 5)
-t.test(bSamp, mu = trials * p)
-
-
-
-#===============================================================================
-#======================= Poison Distribution ===================================
-#===============================================================================
-
-set.seed(123)
-n <- 500
-lambda <- 2
-pSamp <- rpois(n, lambda)
-
-hist(pSamp, prob = TRUE, main = "Poisson Distribution")
-lines(density(pSamp))
-
-# 3. Mean and Variance Agreement
-mean(pSamp)
-var(pSamp)
-
-# 4. Hypothesis Testing (Pick ONE for your exam)
-# Option A: Exact Poisson Test (Best for Poisson data)
-poisson.test(sum(pSamp), T = n, r = lambda)
-
-
-#===============================================================================
-#======================= Geomatric Distribution ==================================
-#===============================================================================
-n <- 500
-p <- 0.3
-geomSamp <- rgeom(n, prob = p)
-
-hist(geomSamp, prob = TRUE, main = "Geometric Distribution")
-lines(density(geomSamp))
-
-# 3. Mean and Variance Agreement
-# Theoretical Mean = (1 - p) / p = 0.7 / 0.3 = 2.333
-# Theoretical Variance = (1 - p) / (p^2) = 0.7 / 0.09 = 7.777
-mean(geomSamp)
-var(geomSamp)
-
-# 4. Hypothesis Testing about the Mean (H0: mu = 2.333)
-t.test(geomSamp, mu = (1 - p) / p)
-
-
-#===============================================================================
-#======================= Normal Distribution ==================================
-#===============================================================================
-n <- 500
-mu <- 10
-sigma <- 2
-nSamp <- rnorm(n, mean = mu, sd = sigma)
-
-hist(nSamp, prob = TRUE, main = "Normal Distribution")
-lines(density(nSamp))
-
-# 3. Mean and Variance Agreement
-# Theoretical Mean = mu = 10
-# Theoretical Variance = sigma^2 = 4
-mean(nSamp)
-var(nSamp)
-
-# 4. Hypothesis Testing (H0: mu = 10)
-t.test(nSamp, mu = mu)
-
-#===============================================================================
-#======================= Exponential Distribution ==================================
-#===============================================================================
-n <- 500
-rate <- 2
-eSamp <- rexp(n, rate)
-
-hist(eSamp, prob = TRUE, main = "Exponential Distribution")
-lines(density(eSamp))
-
-# 3. Mean and Variance Agreement
-# Theoretical Mean = 1 / rate = 0.5
-# Theoretical Variance = 1 / (rate^2) = 0.25
-mean(eSamp)
-var(eSamp)
-
-# 4. Hypothesis Testing (H0: mu = 0.5)
-t.test(eSamp, mu = 1 / rate)
-
-#===============================================================================
-#======================= Gamma Distribution ==================================
-#===============================================================================
-n <- 500
-alpha <- 2  # shape
-beta <- 3   # rate
-gSamp <- rgamma(n, shape = alpha, rate = beta)
-
-hist(gSamp, prob = TRUE, main = "Gamma Distribution")
-lines(density(gSamp))
-
-# 3. Mean and Variance Agreement
-# Theoretical Mean = shape / rate = 2 / 3 = 0.666
-# Theoretical Variance = shape / (rate^2) = 2 / 9 = 0.222
-mean(gSamp)
-var(gSamp)
-
-# 4. Hypothesis Testing (H0: mu = 0.666)
-t.test(gSamp, mu = alpha / beta)
-
-#===============================================================================
 #======================= Control Variate Approach ==================================
 #===============================================================================
 set.seed(123)
@@ -573,3 +431,280 @@ cat("Area under the curve g(u):",t.hat,
 
 
 
+
+
+
+#===============================================================================
+#======================= Exponential Distribution ==================================
+#===============================================================================
+n <- 1000
+rate <- 2
+
+rexpon <- function(size, lambda) {
+  X <- rep(0, size)   
+  
+  for(i in 1:size) {
+    U <- runif(1)                
+    X[i] <- -(1 / lambda) * log(U)  
+  }
+  return(X)}
+# eSamp <- rexp(n, rate)
+eSamp <- rexpon(n, rate)
+
+hist(eSamp, prob = TRUE, main = "Exponential Distribution")
+lines(density(eSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = 1 / rate = 0.5
+# Theoretical Variance = 1 / (rate^2) = 0.25
+mean(eSamp)
+var(eSamp)
+
+# H0:mu = 0.5(The true population mean is equal to the theoretical mean)
+t.test(eSamp, mu = 1 / rate)
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
+#===============================================================================
+#======================= Gamma Distribution ==================================
+#===============================================================================
+n <- 1000
+alpha <- 2  # shape
+beta <- 3   # rate
+
+rgamma_custom <- function(size, shape, rate) {
+  X <- rep(0, size)                 
+  
+  for(i in 1:size) {
+    U <- runif(shape) 
+    
+    X[i] <- sum(-(1 / rate) * log(U))
+  }
+  return(X)}
+
+
+gSamp <- rgamma_custom(n, shape = alpha, rate = beta)
+# gSamp <- rgamma(n, shape = alpha, rate = beta)
+
+hist(gSamp, prob = TRUE, main = "Gamma Distribution")
+lines(density(gSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = shape / rate = 2 / 3 = 0.666
+# Theoretical Variance = shape / (rate^2) = 2 / 9 = 0.222
+mean(gSamp)
+var(gSamp)
+
+# H0:mu = 0.006(The true population mean is equal to the theoretical mean)
+t.test(gSamp, mu = alpha / beta)
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
+
+
+#===============================================================================
+#======================= Normal Distribution ==================================
+#===============================================================================
+n <- 10000
+mu <- 10
+sigma <- 2
+
+rnorm_custom <- function(size, mean , sd) {
+  X <- rep(0, size) 
+  
+  for(i in 1:size) {
+    U1 <- runif(1)      
+    U2 <- runif(1)                  
+    
+    Z <- sqrt(-2 * log(U1)) * cos(2 * pi * U2)
+    X[i] <- mean + (sd * Z)
+  }
+  
+  return(X)}
+
+nSamp <- rnorm_custom(n, mean = mu, sd = sigma)
+# nSamp <- rnorm(n, mean = mu, sd = sigma)
+
+hist(nSamp, prob = TRUE, main = "Normal Distribution")
+lines(density(nSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = mu = 10
+# Theoretical Variance = sigma^2 = 4
+mean(nSamp)
+var(nSamp)
+
+# 4. Hypothesis Testing (H0: mu = 10)
+t.test(nSamp, mu = mu)
+
+
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
+
+#===============================================================================
+#======================= Uniform Distribution ==================================
+#===============================================================================
+n <- 10000
+
+runif_custom <- function(size, min = 0, max = 1) {
+  X <- rep(0, size)
+  for(i in 1:size) {
+    U <- runif(1)
+    
+    X[i] <- min + (max - min) * U
+  }
+  
+  return(X)}
+
+uSamp <- runif_custom (n)
+# uSamp <- runif(n)
+
+hist(uSamp, prob = TRUE, main = "Uniform Distribution")
+lines(density(uSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = (min + max) / 2 = 0.5
+# Theoretical Variance = (max - min)^2 / 12 = 0.0833
+mean(uSamp)
+var(uSamp)
+
+# 4. Hypothesis Testing about the Mean (H0: mu = 0.5)
+t.test(uSamp, mu = 0.5)
+
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
+
+
+#===============================================================================
+#======================= Binomial Distribution ==================================
+#===============================================================================
+n <- 10000
+trials <- 10
+p <- 0.5
+
+rbinom_custom <- function(size, trials, prob) {
+  X <- rep(0, size) 
+  
+  for(i in 1:size) {
+    successes <- 0
+    for(t in 1:trials) {
+      U <- runif(1)                 
+      if(U <= prob) {
+        successes <- successes + 1  
+      }
+    }
+    
+    X[i] <- successes 
+  }
+  
+  return(X)}
+
+bSamp <- rbinom_custom(n, trials= trials, prob = p)
+# bSamp <- rbinom(n, size = trials, prob = p)
+
+hist(bSamp, prob = TRUE, main = "Binomial Distribution")
+lines(density(bSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = trials * p = 10 * 0.5 = 5
+# Theoretical Variance = trials * p * (1 - p) = 10 * 0.5 * 0.5 = 2.5
+mean(bSamp)
+var(bSamp)
+
+# 4. Hypothesis Testing about the Mean (H0: mu = 5)
+t.test(bSamp, mu = trials * p)
+
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
+
+
+#===============================================================================
+#======================= Poison Distribution ===================================
+#===============================================================================
+
+n <- 10000
+lambda <- 2
+
+rpois_custom <- function(size, lambda) {
+  X <- rep(0, size) 
+  L <- exp(-lambda)
+  
+  for(i in 1:size) {
+    k <- 0
+    p <- 1
+    
+    while(p > L) {
+      k <- k + 1
+      U <- runif(1)
+      p <- p * U
+    }
+    
+    X[i] <- k - 1
+  }
+  
+  return(X)}
+
+pSamp <- rpois_custom(n, lambda)
+# pSamp <- rpois(n, lambda)
+
+hist(pSamp, prob = TRUE, main = "Poisson Distribution")
+lines(density(pSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = lambda =2
+# Theoretical Variance = lambda = 2
+mean(pSamp)
+var(pSamp)
+
+
+t.test(pSamp, mu=lambda)
+
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
+
+#===============================================================================
+#======================= Geomatric Distribution ==================================
+#===============================================================================
+n <- 10000
+p <- 0.3
+
+rgeom_custom <- function(size, prob) {
+  X <- rep(0, size) 
+  
+  for(i in 1:size) {
+    failures <- 0
+    
+    while(TRUE) {
+      U <- runif(1)
+      if (U <= prob) {
+        break 
+      } else {
+        failures <- failures + 1
+      }}
+    
+    X[i] <- failures
+  }
+  return(X)}
+
+geomSamp <- rgeom_custom(n, prob = p)
+# geomSamp <- rgeom(n, prob = p)
+
+hist(geomSamp, prob = TRUE, main = "Geometric Distribution")
+lines(density(geomSamp))
+
+# 3. Mean and Variance Agreement
+# Theoretical Mean = (1 - p) / p = 0.7 / 0.3 = 2.333
+# Theoretical Variance = (1 - p) / (p^2) = 0.7 / 0.09 = 7.777
+mean(geomSamp)
+var(geomSamp)
+
+# 4. Hypothesis Testing about the Mean (H0: mu = 2.333)
+t.test(geomSamp, mu = (1 - p) / p)
+
+
+
+#conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
