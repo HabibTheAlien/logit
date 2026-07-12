@@ -261,8 +261,10 @@ rand <- function(m, a, seed, n){   # m and a are vectors of length k
       sum <- sum + ((-1)^(j-1)) * z[j]
     }
     x <- sum %% (m[1]-1)
-    if(x>0)
-      R <- (x + m[1]) else (m[1]-1)/m[1]
+    if(x>0){
+      R <- (x / m[1])
+      
+      }else {R<-(m[1]-1)/m[2]}
     vec <- c(vec, R)
   }
   vec
@@ -619,6 +621,7 @@ t.test(pSamp, mu=lambda)
 
 
 #conclusion: Since the p-value > 0.05, the test is statistically insignificant. Therefore, we fail to reject the null hypothesis.thus, the true population mean is equal to the theoretical mean
+
 
 
 #===========================================
